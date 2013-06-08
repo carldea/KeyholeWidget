@@ -1,0 +1,40 @@
+/* 
+    Document   : Keyhole widget
+    Created on : Jun 8, 2013, 2:48 PM
+    Author     : cdea
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+.keyhole-widget { 
+    -fx-skin: "com.carlfx.internal.scene.skin.keyhole.KeyholeSkin";
+}
+
+#keyhole-widget-background {
+}
+
+#keyhole-outer-metal-rim {
+}
+
+#keyhole-content-background {
+}
+
+#keyhole-top-glare-group {
+}
+
+#keyhole-circle-glare-group {
+}
+
+#keyhole-lower-right-circle {
+}
+
+#keyhole-upper-left-circle-glare{
+}
+
+#keyhole-right-glare-group {
+}
+#keyhole-right-bottom-glare {
+}
+
+#keyhole-right-top-glare {
+}
