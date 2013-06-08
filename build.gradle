@@ -5,18 +5,18 @@ apply plugin: 'eclipse'
 apply plugin: 'idea'
 
 repositories {
-	mavenRepo urls: "https://oss.sonatype.org/content/repositories/snapshots/"
+    url = "https://oss.sonatype.org/content/repositories/snapshots/"
     mavenCentral()
 }
 
 dependencies {
-    testCompile  "junit:junit:${jfxtras_junitVersion}"
+    testCompile  "junit:junit:${keyhole_junitVersion}"
     testCompile  "net.java.jemmy:JemmyFX:0.9.3-SNAPSHOT"
 }
 
-apply {
-  from 'gradle/mavenCentralDeploy.gradle'
-}
+//apply {
+//  from 'gradle/mavenCentralDeploy.gradle'
+//}
 
 task buildTimestamped(type: Copy, dependsOn: 'build') {
     from 'build/libs'
@@ -35,10 +35,11 @@ javadoc {
     failOnError = false
 }
 
+/*
 signArchives.onlyIf {
       project.hasProperty('signing.keyId')
 }
-
+*/
 uploadArchives.onlyIf {
       project.hasProperty('sonatypeUsername') && project.hasProperty('sonatypePassword')
 }
