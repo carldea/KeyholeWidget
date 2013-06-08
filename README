@@ -1,0 +1,52 @@
+Keyhole
+============
+_A project to create a crossplatform and portable multi-purpose widget written in JavaFX_
+
+Client is created using the preview release of Java 8 (http://jdk8.java.net/download.html).
+
+
+Prerequisites
+-------------------
+* Java 8 http://jdk8.java.net/download.html
+* JAVA_HOME environment variable
+* GRADLE_HOME environment variable
+
+Quick Start
+--------------------
+1. Install Java 8 http://jdk8.java.net/download.html
+2. md keyhole on *nix systems and mkdir on Windows.
+3. cd keyhole
+4. git clone git@github.com:carldea/keyhole.git
+5. gradle
+6. cd libs
+7. java -jar keyhole-SNAPSHOT.jar (or double click the file)
+
+
+Additional Notes:
+--------------------
+
+
+Java version: 1.8.0-ea, vendor: Oracle Corporation
+Java home: C:\Program Files (x86)\Java\jdk1.8.0\jre
+Default locale: en_US, platform encoding: Cp1252
+OS name: "windows 7", version: "6.1", arch: "x86", family: "dos"
+
+JAVA_HOME=C:\Program Files (x86)\Java\jdk1.8.0
+
+
+Building with Gradle
+--------------------
+* Set your environment variable JAVA_HOME to the installed JDK directory. I.e. C:\Program Files (x86)\Java\jdk1.8.0
+* cd keyhole
+* gradle
+
+Intellij IDE users
+---------------------
+* gradle idea
+
+Eclipse IDE users
+---------------------
+* gradle eclipse
+
+TODO
+---------------------

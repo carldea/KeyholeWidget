@@ -1,0 +1,49 @@
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'signing'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+
+repositories {
+	mavenRepo urls: "https://oss.sonatype.org/content/repositories/snapshots/"
+    mavenCentral()
+}
+
+dependencies {
+    testCompile  "junit:junit:${jfxtras_junitVersion}"
+    testCompile  "net.java.jemmy:JemmyFX:0.9.3-SNAPSHOT"
+}
+
+apply {
+  from 'gradle/mavenCentralDeploy.gradle'
+}
+
+task buildTimestamped(type: Copy, dependsOn: 'build') {
+    from 'build/libs'
+    into 'build/libs/timestamped'
+    include '*.jar'
+    rename { String fileName ->
+        fileName.replace('SNAPSHOT', "SNAPSHOT-${new Date().format('HH-mm-dd-MM-yyyy')}")
+    }
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '1.6'
+}
+
+javadoc {
+    failOnError = false
+}
+
+signArchives.onlyIf {
+      project.hasProperty('signing.keyId')
+}
+
+uploadArchives.onlyIf {
+      project.hasProperty('sonatypeUsername') && project.hasProperty('sonatypePassword')
+}
+
+task copyToLib(type: Copy) {
+    into "_lib"
+    from configurations.testCompile
+}
