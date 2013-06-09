@@ -15,25 +15,7 @@
  */
 package com.carlfx.scene.control.keyhole;
 
-import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
-import javafx.animation.Timeline;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.control.Control;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.LinearGradientBuilder;
-import javafx.scene.paint.Paint;
-import javafx.scene.paint.Stop;
-import javafx.util.Duration;
 
 /**
  *
@@ -61,7 +43,7 @@ public class Keyhole extends Control {
 
     @Override
     protected String getUserAgentStylesheet() {
-        return getClass().getResource("/com/carlfx/scene/control/keyhole_widget.css").toExternalForm();
+        return getClass().getResource("/scene/control/keyhole_widget.css").toExternalForm();
     }
 
 }

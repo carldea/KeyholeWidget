@@ -7,16 +7,36 @@
 */
 
 .keyhole-widget { 
-    -fx-skin: "com.carlfx.internal.scene.skin.keyhole.KeyholeSkin";
+    -fx-skin: "com.carlfx.scene.skin.keyhole.KeyholeSkin";
 }
 
 #keyhole-widget-background {
+    -fx-fill                        : #75bac6;
+    -fx-opacity                     : 1;
+    /*fill-rule:nonzero; */
+    -fx-stroke                      : #000000;
+    -fx-stroke-width                : 0.251616;
+    -fx-stroke-miterlimit           : 4;
+    -fx-stroke-opacity              : 1;
+    -fx-stroke-dasharray            : none;
 }
 
 #keyhole-outer-metal-rim {
+    -fx-fill                        : linear-gradient( from 13px 38px to 72px 72px, reflect, rgba(0,0,0,.6), transparent);
+    /*-fx-fill-opacity                : 1; */
+    /* fill-rule:nonzero; */
+    -fx-stroke                      : #000000;
+    -fx-stroke-width                : 0.251616;
+    -fx-stroke-miterlimit           : 4;
+    -fx-stroke-opacity              : 1;
+    -fx-stroke-dasharray            : none;
 }
 
 #keyhole-content-background {
+    -fx-fill                        : rgba(0,0,0,.9);
+    -fx-fill-opacity                : 1;
+    -fx-fill-rule                   : evenodd;
+    /*-fx-stroke                      : none;*/
 }
 
 #keyhole-top-glare-group {
@@ -25,16 +45,20 @@
 #keyhole-circle-glare-group {
 }
 
-#keyhole-lower-right-circle {
+#keyhole-lower-right-circle-glare {
+    -fx-fill                        : linear-gradient( from 816.15186px 412.62476px to 425.79575px 288.98944px, rgba(255,255,255,1), rgba(255,255,255,0));
 }
 
 #keyhole-upper-left-circle-glare{
+    -fx-fill                        : linear-gradient( from -116.81336px 64.11824px to 148.79393px 227.05623px, rgba(255,255,255,1), rgba(255,255,255,0));
 }
 
 #keyhole-right-glare-group {
 }
 #keyhole-right-bottom-glare {
+    -fx-fill                        : linear-gradient( to top, rgba(255,255,255,0.09392857), rgba(255,255,255,0));
 }
 
 #keyhole-right-top-glare {
+    -fx-fill                        : linear-gradient( to bottom, rgba(255,255,255,0.09392857), rgba(255,255,255,0));
 }

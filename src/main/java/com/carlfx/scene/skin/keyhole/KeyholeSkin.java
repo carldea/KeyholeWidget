@@ -16,24 +16,20 @@
 package com.carlfx.scene.skin.keyhole;
 
 
-import javafx.animation.AnimationTimer;
+import com.carlfx.scene.control.keyhole.Keyhole;
 import javafx.event.EventHandler;
-import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.Skin;
-import javafx.scene.effect.GaussianBlur;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TouchEvent;
 import javafx.scene.layout.Region;
-import javafx.scene.paint.*;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.RectangleBuilder;
 import javafx.scene.shape.SVGPath;
-import javafx.scene.shape.SVGPathBuilder;
-import javafx.scene.text.Text;
 import javafx.scene.transform.Scale;
-import javafx.scene.transform.ScaleBuilder;
-import com.carlfx.scene.control.keyhole.Keyhole;
+import javafx.scene.transform.Transform;
+
 
 import static com.carlfx.scene.control.keyhole.Keyhole.PREFERRED_HEIGHT;
 import static com.carlfx.scene.control.keyhole.Keyhole.PREFERRED_WIDTH;
@@ -132,75 +128,106 @@ public class KeyholeSkin extends Region implements Skin<Keyhole>{
         final double HEIGHT         = CONTROL.getPrefHeight();
         final double SCALE_FACTOR_X = WIDTH / PREFERRED_WIDTH;
         final double SCALE_FACTOR_Y = HEIGHT / PREFERRED_HEIGHT;
-        final Scale SCALE           = ScaleBuilder.create()
-                .x(WIDTH / PREFERRED_WIDTH)
-                .y(HEIGHT / PREFERRED_HEIGHT)
-                .pivotX(0)
-                .pivotY(0)
-                .build();
-/*
-        Rectangle backgroundRect = RectangleBuilder.create()
-                .id("slide-background")
-                .width(WIDTH)
-                .height(HEIGHT)
-                .build();
-        backgroundRect.visibleProperty().bind(CONTROL.backgroundVisibleProperty());
+        final Scale SCALE           = new Scale();
+        SCALE.setX(SCALE_FACTOR_X);
+        SCALE.setY(SCALE_FACTOR_Y);
+        SCALE.setPivotX(0);
+        SCALE.setPivotY(0);
 
-        Rectangle slideArea = RectangleBuilder.create()
-                .id("slide-area")
-                .x(0.0612476117 * WIDTH)
-                .y(0.2463297872 * HEIGHT)
-                .width(0.8829200973 * WIDTH)
-                .height(0.5319148936 * HEIGHT)
-                .arcWidth(0.079787234 * HEIGHT)
-                .arcHeight(0.079787234 * HEIGHT)
-                .build();
 
-        SVGPath glareRect = SVGPathBuilder.create()
-                .fill(LinearGradientBuilder.create()
-                        .proportional(true)
-                        .startX(0)
-                        .startY(0)
-                        .endX(0)
-                        .endY(1)
-                        .stops(new Stop(0, Color.web("f0f0f0", 1)),
-                                new Stop(1, Color.web("f0f0f0", 0))
-                        )
-                        .build()
-                )
-                .opacity(.274)
-                .transforms(SCALE)
-                .content("m 0,0 0,94 32,0 0,-27.218747 C 30.998808,55.222973 37.761737,45.9354 46.156457,45.93665 l 431.687503,0.06427 c 8.39472,0.0013 15.15487,9.290837 15.15315,20.814756 l -0.004,27.218754 30.28125,0 0,-94.0000031 L 0,0 z")
-                .id("glare-frame")
-                .build();
-        glareRect.visibleProperty().bind(CONTROL.backgroundVisibleProperty());
+        // draw #keyhole-widget-background
+        Node widgetBackground = drawWidgetBackground(SCALE);
+        // draw #keyhole-outer-metal-rim
+        Node outerMetalRim = drawOuterMetalRim(SCALE);
+        // draw #keyhole-content-background
+        Node contentBackground = drawContentBackground(SCALE);
+        // draw #keyhole-top-glare-group
+        // draw #keyhole-circle-glare-group
+        // draw #keyhole-lower-right-circle
+        Node  lowerRightCircleGlare = drawLowerCircleGlare(SCALE);
+        // draw #keyhole-upper-left-circle-glare
+        Node upperLeftCircleGlare = drawUpperCircleGlare(SCALE);
 
-        text.setText(CONTROL.getText());
-        text.setId("slide-text");
-        text.getTransforms().clear();
-        text.getTransforms().add(SCALE);
+        // draw #keyhole-right-glare-group
+        // draw #keyhole-right-bottom-glare
+        Node rightBottomGlare = drawRightBottomGlare(SCALE);
+        // draw #keyhole-right-top-glare
+        Node rightTopGlare = drawRightTopGlare(SCALE);
 
-        drawSlideButton();
-        button.translateXProperty().bind(CONTROL.endXProperty().multiply(SCALE_FACTOR_X));
-        button.setTranslateY(SlideLock.BUTTON_YCOORD * SCALE_FACTOR_Y);
-
-        text.setTranslateX(SlideLock.START_XCOORD + button.getBoundsInParent().getWidth() + 0.1063829787 * HEIGHT);
-        text.setTranslateY(0.5744680851 * HEIGHT);
-        text.opacityProperty().bind(CONTROL.textOpacityProperty());
-
-        Rectangle topGlareRect = RectangleBuilder.create()
-                .id("slide-top-glare")
-                .fill(Color.WHITE)
-                .width(WIDTH)
-                .height(0.5 * HEIGHT)
-                .opacity(0.0627451)
-                .build();
-        topGlareRect.visibleProperty().bind(CONTROL.backgroundVisibleProperty());
-        getChildren().clear();
-        getChildren().addAll(backgroundRect, slideArea, glareRect, text, button, topGlareRect);
-*/
+        getChildren().addAll(widgetBackground,
+                outerMetalRim,
+                contentBackground,
+                // content goes here
+                rightTopGlare,
+                rightBottomGlare,
+                upperLeftCircleGlare,
+                lowerRightCircleGlare
+        );
     }
 
+
+
+
+    private Node drawWidgetBackground(Scale scale) {
+        SVGPath svgPath = new SVGPath();
+        svgPath.getTransforms().add(scale);
+        svgPath.setContent("m 65.545965,0.350505 c -36.130555,0 -65.420156,28.815813 -65.420156,64.350793 0,35.534982 29.289601,64.335072 65.420156,64.335072 22.49148,0 42.323155,-11.1652 54.097435,-28.1653 l 146.15745,0 c 6.37235,0 11.51142,-5.123262 11.51142,-11.495662 l 0,-47.44535 c 0,-6.37234 -5.13907,-11.51144 -11.51142,-11.51144 l -144.88364,0 C 109.21711,12.151138 88.561815,0.350505 65.545965,0.350505 z");
+        svgPath.setId("keyhole-widget-background");
+
+        return svgPath;
+    }
+    private Node drawOuterMetalRim(Scale scale) {
+        SVGPath svgPath = new SVGPath();
+        svgPath.getTransforms().add(scale);
+        svgPath.setContent("m 65.545965,0.350505 c -36.13055,0 -65.420157,28.815813 -65.420157,64.350793 0,35.534982 29.289607,64.335072 65.420157,64.335072 22.49148,0 42.323155,-11.1652 54.097435,-28.1653 l 146.15745,0 c 6.37235,0 11.51142,-5.123262 11.51142,-11.495662 l 0,-47.44535 c 0,-6.37234 -5.13907,-11.51144 -11.51142,-11.51144 l -144.88364,0 C 109.21711,12.151138 88.561815,0.350505 65.545965,0.350505 z");
+        svgPath.setId("keyhole-outer-metal-rim");
+
+        return svgPath;
+    }
+
+    private Node drawContentBackground(Scale scale) {
+        SVGPath svgPath = new SVGPath();
+        svgPath.getTransforms().add(scale);
+        svgPath.setContent("m 65.608875,7.1834649 c -32.295481,0 -58.469271,25.7468531 -58.469271,57.5099531 0,31.76319 26.17379,57.509952 58.469271,57.509952 21.23968,0 39.829435,-11.143 50.071575,-27.803462 l 149.41272,0 c 2.87731,0 5.20531,-2.3123 5.20531,-5.1896 l 0,-47.85427 c 0,-2.87728 -2.328,-5.18953 -5.20531,-5.18953 l -148.70505,0 C 106.20743,18.633498 87.060795,7.1834649 65.608875,7.1834649 z");
+        svgPath.setId("keyhole-content-background");
+
+        return svgPath;
+    }
+
+    private Node drawRightBottomGlare(Scale scale) {
+        SVGPath svgPath = new SVGPath();
+        svgPath.getTransforms().add(scale);
+        svgPath.setContent("m 116.15625,94.083841 c 2.86983,-5.068457 4.98785,-10.617495 6.19975,-16.543751 l 1.14164,-11.259816 c 0,-4.020552 -0.41607,-7.943783 -1.22093,-11.731595 l 143.92595,0 c 1.80705,0 3.26636,1.44733 3.26636,3.239556 l 0,33.05605 c 0,1.792226 -1.45931,3.239556 -3.26636,3.239556 l -150.04641,0 z");
+        svgPath.setId("keyhole-right-bottom-glare");
+
+        return svgPath;
+    }
+
+    private Node drawRightTopGlare(Scale scale) {
+        SVGPath svgPath = new SVGPath();
+        svgPath.getTransforms().add(scale);
+        svgPath.setContent("m 116.15625,36.699448 c 2.8631,5.068457 4.97616,10.617495 6.18521,16.543751 l 1.13896,11.259816 c 0,4.020552 -0.41509,7.943783 -1.21805,11.731595 l 143.5885,0 c 1.80282,0 3.2587,-1.44733 3.2587,-3.239555 l 0,-33.056051 c 0,-1.792226 -1.45588,-3.239556 -3.2587,-3.239556 l -149.69462,0 z");
+        svgPath.setId("keyhole-right-top-glare");
+
+        return svgPath;
+    }
+    private Node drawLowerCircleGlare(Scale scale) {
+        SVGPath svgPath = new SVGPath();
+        svgPath.getTransforms().add(scale);
+        svgPath.setContent("m 504,381.5 c 0,68.09616 -47.0101,123.29901 -105,123.29901 -57.9899,0 -105,-55.20285 -105,-123.29901 0,-68.09616 47.0101,-123.29901 105,-123.29901 57.9899,0 105,55.20285 105,123.29901 z");
+        svgPath.setId("keyhole-lower-right-circle-glare");
+        svgPath.getTransforms().add(Transform.affine(0.07542637,0.22779962,-0.32633786,0.05279491,166.52815,-14.136685));
+        return svgPath;
+    }
+
+    private Node drawUpperCircleGlare(Scale scale) {
+        SVGPath svgPath = new SVGPath();
+        svgPath.getTransforms().add(scale);
+        svgPath.setContent("m 187,173 c 0,74.00616 -37.60808,134 -84,134 C 56.608081,307 19,247.00616 19,173 19,98.993844 56.608081,39 103,39 c 46.39192,0 84,59.993844 84,134 z");
+        svgPath.setId("keyhole-upper-left-circle-glare");
+        svgPath.getTransforms().add(Transform.affine(0.27654374,0.13369495,-0.21113577,0.17511246,60.050271,-10.349852));
+        return svgPath;
+    }
     private void drawxyz() {
         final double WIDTH   = CONTROL.getPrefWidth();
         final double HEIGHT  = CONTROL.getPrefHeight();
