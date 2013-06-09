@@ -6,6 +6,7 @@ import javafx.scene.Scene;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 /**
  * User: cdea
@@ -14,12 +15,14 @@ import javafx.stage.Stage;
 public class KeyholeDemo extends Application {
     @Override
     public void start(Stage primaryStage) {
-        Keyhole keyhole1 = new Keyhole();
+        primaryStage.initStyle(StageStyle.TRANSPARENT);
+        Keyhole keyhole1 = new Keyhole(primaryStage);
         Group root = new Group();
         VBox vBox = new VBox();
         vBox.getChildren().addAll(keyhole1);
         root.getChildren().add(vBox);
-        Scene scene = new Scene(root, 525, 750, Color.BLACK);
+        Scene scene = new Scene(root, keyhole1.getPrefWidth(), keyhole1.getPrefHeight(), null);
+        //Scene scene = new Scene(root, 525, 750, Color.rgb(0,0,0, .6));
 
         primaryStage.setTitle("Keyhole widget control");
         primaryStage.setScene(scene);

@@ -12,6 +12,9 @@
 
 #keyhole-widget-background {
     -fx-fill                        : #75bac6;
+    /*-fx-fill                        : #EA0000;*/
+    /*-fx-fill                        : #008000;*/
+    /*-fx-fill                        : #8080FF;*/
     -fx-opacity                     : 1;
     /*fill-rule:nonzero; */
     -fx-stroke                      : #000000;
