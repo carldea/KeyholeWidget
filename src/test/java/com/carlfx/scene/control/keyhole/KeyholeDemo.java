@@ -16,11 +16,12 @@ public class KeyholeDemo extends Application {
     @Override
     public void start(Stage primaryStage) {
         primaryStage.initStyle(StageStyle.TRANSPARENT);
-        Keyhole keyhole1 = new Keyhole(primaryStage);
+        Keyhole keyhole1 = new KeyholeStage(primaryStage);
         Group root = new Group();
         VBox vBox = new VBox();
         vBox.getChildren().addAll(keyhole1);
         root.getChildren().add(vBox);
+
         Scene scene = new Scene(root, keyhole1.getPrefWidth(), keyhole1.getPrefHeight(), null);
         //Scene scene = new Scene(root, 525, 750, Color.rgb(0,0,0, .6));
 
