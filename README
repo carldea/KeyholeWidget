@@ -17,10 +17,12 @@ Quick Start
 2. md keyhole on *nix systems and mkdir on Windows.
 3. cd keyhole
 4. git clone git@github.com:carldea/keyhole.git
-5. gradle
+5. gradlew.bat
+6. gradle jar
 6. cd libs
-7. java -jar keyhole-SNAPSHOT.jar (or double click the file)
+7. keyhole-SNAPSHOT.jar
 
+Look at KeyholeDemo.java
 
 Additional Notes:
 --------------------
@@ -50,3 +52,7 @@ Eclipse IDE users
 
 TODO
 ---------------------
+1. Create methods to allow user of the api to set content.
+2. Provide context menus
+3. Easy transitioning of content in the view port area.
+4. Allow onXXXX() methods when content has finish scrolling.
