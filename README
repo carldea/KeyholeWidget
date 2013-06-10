@@ -16,12 +16,13 @@ Quick Start
 1. Install Java 8 http://jdk8.java.net/download.html
 2. md keyhole on *nix systems and mkdir on Windows.
 3. cd keyhole
-4. git clone git@github.com:carldea/keyhole.git
+4. git clone git@github.com:carldea/KeyholeWidget.git
 5. gradlew.bat
 6. gradle jar
 6. cd libs
 7. keyhole-SNAPSHOT.jar
 
+Include in your classpath and
 Look at KeyholeDemo.java
 
 Additional Notes:
