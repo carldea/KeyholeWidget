@@ -15,7 +15,10 @@
  */
 package com.carlfx.scene.control.keyhole;
 
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.control.Control;
+import javafx.scene.paint.Color;
 
 /**
  *
@@ -26,13 +29,19 @@ public class Keyhole extends Control {
     public static final double  PREFERRED_WIDTH = 277.438;
     public static final double  PREFERRED_HEIGHT = 128.938;
 
+    /** #keyhole-widget-background
+     * main widget background.
+     */
+    private ObjectProperty<Color> widgetMetalRimColor;
 
     public Keyhole () {
         init();
     }
 
     protected void init() {
+        widgetMetalRimColor = new SimpleObjectProperty<Color>(Color.web("#75bac6"));
         getStyleClass().setAll(DEFAULT_STYLE_CLASS);
+
     }
 
     @Override
@@ -40,4 +49,15 @@ public class Keyhole extends Control {
         return getClass().getResource("/scene/control/keyhole_widget.css").toExternalForm();
     }
 
+    public Color getWidgetMetalRimColor() {
+        return widgetMetalRimColor.get();
+    }
+
+    public ObjectProperty<Color> widgetMetalRimColorProperty() {
+        return widgetMetalRimColor;
+    }
+
+    public void setWidgetMetalRimColor(Color widgetMetalRimColor) {
+        this.widgetMetalRimColor.set(widgetMetalRimColor);
+    }
 }

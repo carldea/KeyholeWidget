@@ -16,116 +16,141 @@
 package com.carlfx.scene.skin.keyhole;
 
 
+import com.carlfx.scene.behavior.KeyholeBehavior;
 import com.carlfx.scene.control.keyhole.Keyhole;
-import javafx.event.EventHandler;
 import javafx.scene.Node;
-import javafx.scene.control.Skin;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.input.TouchEvent;
-import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.RectangleBuilder;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.transform.Scale;
 import javafx.scene.transform.Transform;
-
 
 import static com.carlfx.scene.control.keyhole.Keyhole.PREFERRED_HEIGHT;
 import static com.carlfx.scene.control.keyhole.Keyhole.PREFERRED_WIDTH;
 
 /**
+ * This represents the JavaFX Skin class mainly comprised of the drawings of
+ * the control's face. The styling is done in the keyhole_widget.css file.
  *
  * @author cdea
  */
-public class KeyholeSkin extends Region implements Skin<Keyhole>{
-    private final Keyhole            CONTROL;
-    private EventHandler<MouseEvent> mouseHandler;
-    private EventHandler<TouchEvent> touchHandler;
-    
+public class KeyholeSkin extends com.sun.javafx.scene.control.skin.BehaviorSkinBase<Keyhole, KeyholeBehavior>{
+    private boolean     isDirty;
+    private boolean     initialized;
+    private Node        widgetBackground;
+
     public KeyholeSkin(final Keyhole keyhole) {
-        this.CONTROL = keyhole;
+        super(keyhole, new KeyholeBehavior(keyhole));
+        System.out.println("skin:KeyholeSkin()");
+        initialized  = false;
+        isDirty = false;
 
-        if (CONTROL.getPrefWidth() <= 0 || CONTROL.getPrefHeight() <= 0) {
-            CONTROL.setPrefSize(PREFERRED_WIDTH, PREFERRED_HEIGHT);
-        }
+        init();
 
-
-        mouseHandler = new EventHandler<MouseEvent>() {
-            @Override public void handle(final MouseEvent event) {
-                if (MouseEvent.MOUSE_PRESSED == event.getEventType()) {
-                } else if (MouseEvent.MOUSE_DRAGGED == event.getEventType()) {
-                } else if (MouseEvent.MOUSE_RELEASED == event.getEventType()) {
-                }
-            }
-        };
-
-        touchHandler = new EventHandler<TouchEvent>() {
-            @Override public void handle(final TouchEvent event) {
-                if (TouchEvent.TOUCH_PRESSED == event.getEventType()) {
-                    
-                } else if (TouchEvent.TOUCH_MOVED == event.getEventType()) {
-                    
-                } else if (TouchEvent.TOUCH_RELEASED == event.getEventType()) {
-                    
-                }
-            }
-        };
-
-        setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
-
-        drawControl();
-        addHandlers();
         //startAnimations();
     }
+    private void init() {
+        System.out.println("skin:init()");
+        Keyhole control = getSkinnable();
+        if (control.getPrefWidth() <= 0 && control.getPrefHeight() <= 0) {
+            control.setPrefSize(PREFERRED_WIDTH, PREFERRED_HEIGHT);
+        } else if (control.getPrefWidth() <= 0) {
+            control.setPrefSize(PREFERRED_WIDTH, control.getPrefHeight());
+        } else if (control.getPrefHeight() <= 0) {
+            control.setPrefSize(control.getPrefWidth(), PREFERRED_HEIGHT);
+        }
 
-    /**
-     * This method builds an AnimationTimer and starts it to provide periodic animations.
-     * If the skin is to call the layoutChildren() method it is important to stop and recreate if scaling changes.
-     */
-    private void startAnimations() {
+        // Register listeners
+        registerChangeListener(control.widgetMetalRimColorProperty(), "OUTER_RIM_COLOR");
+//        mouseHandler = new EventHandler<MouseEvent>() {
+//            @Override public void handle(final MouseEvent event) {
+//                if (MouseEvent.MOUSE_PRESSED == event.getEventType()) {
+//                } else if (MouseEvent.MOUSE_DRAGGED == event.getEventType()) {
+//                } else if (MouseEvent.MOUSE_RELEASED == event.getEventType()) {
+//                }
+//            }
+//        };
+//
+//        touchHandler = new EventHandler<TouchEvent>() {
+//            @Override public void handle(final TouchEvent event) {
+//                if (TouchEvent.TOUCH_PRESSED == event.getEventType()) {
+//
+//                } else if (TouchEvent.TOUCH_MOVED == event.getEventType()) {
+//
+//                } else if (TouchEvent.TOUCH_RELEASED == event.getEventType()) {
+//
+//                }
+//            }
+//        };
 
-        // create a spot light animation across the letters.
+        //setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+        addHandlers();
+
+        initialized = true;
+        repaint();
+    }
+    @Override protected void handleControlPropertyChanged(final String PROPERTY) {
+        System.out.println("skin:handleControlPropertyChanged()");
+        super.handleControlPropertyChanged(PROPERTY);
+        if ("OUTER_RIM_COLOR".equals(PROPERTY)) {
+            widgetBackground.setStyle("-fx-fill: " + colorToCssColor(getSkinnable().getWidgetMetalRimColor()));
+        } else if ("PREF_WIDTH".equals(PROPERTY)) {
+            repaint();
+        } else if ("PREF_HEIGHT".equals(PROPERTY)) {
+            repaint();
+        }
     }
 
-    @Override public void layoutChildren() {
-        // TODO MAKE THIS efficient and cache images
-	drawControl();
-        startAnimations();
-        super.layoutChildren();
+    private void updateKeyhole() {
+        System.out.println("skin:updateKeyhole()");
+
     }
 
-    @Override public Keyhole getSkinnable() {
-        return CONTROL;
+    public final void repaint() {
+        System.out.println("skin:repaint()");
+        isDirty = true;
+        getSkinnable().requestLayout();
     }
 
-    @Override public Node getNode() {
-        return this;
+    @Override public void layoutChildren(double x, double y, double w, double h) {
+        super.layoutChildren(x, y, w, h);
+        System.out.println("skin:layoutChildren()");
+        if (!isDirty) {
+            return;
+        }
+        if (!initialized) {
+            init();
+        }
+        if (getSkinnable().getScene() != null) {
+            drawControl();
+        }
+        isDirty = false;
     }
 
     @Override public void dispose() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        System.out.println("skin:dispose()");
+        getChildren().clear();
     }
 
     private void addHandlers() {
-        // MouseEvents
-        setOnMousePressed(mouseHandler);
-        setOnMouseDragged(mouseHandler);
-        setOnMouseReleased(mouseHandler);
-        // TouchEvents
-        setOnTouchPressed(touchHandler);
-        setOnTouchMoved(touchHandler);
-        setOnTouchReleased(touchHandler);
+//        // MouseEvents
+//        setOnMousePressed(mouseHandler);
+//        setOnMouseDragged(mouseHandler);
+//        setOnMouseReleased(mouseHandler);
+//        // TouchEvents
+//        setOnTouchPressed(touchHandler);
+//        setOnTouchMoved(touchHandler);
+//        setOnTouchReleased(touchHandler);
     }
-
- 
 
 
     // ******************** Drawing related ***********************************
 
     private void drawControl() {
-        final double WIDTH          = CONTROL.getPrefWidth();
-        final double HEIGHT         = CONTROL.getPrefHeight();
+        System.out.println("skin:drawControl()");
+        getChildren().clear();
+        Keyhole control = getSkinnable();
+        final double WIDTH          = control.getPrefWidth();
+        final double HEIGHT         = control.getPrefHeight();
         final double SCALE_FACTOR_X = WIDTH / PREFERRED_WIDTH;
         final double SCALE_FACTOR_Y = HEIGHT / PREFERRED_HEIGHT;
         final Scale SCALE           = new Scale();
@@ -134,9 +159,9 @@ public class KeyholeSkin extends Region implements Skin<Keyhole>{
         SCALE.setPivotX(0);
         SCALE.setPivotY(0);
 
-
         // draw #keyhole-widget-background
-        Node widgetBackground = drawWidgetBackground(SCALE);
+        widgetBackground = drawWidgetBackground(SCALE);
+
         // draw #keyhole-outer-metal-rim
         Node outerMetalRim = drawOuterMetalRim(SCALE);
         // draw #keyhole-content-background
@@ -228,16 +253,14 @@ public class KeyholeSkin extends Region implements Skin<Keyhole>{
         svgPath.getTransforms().add(Transform.affine(0.27654374,0.13369495,-0.21113577,0.17511246,60.050271,-10.349852));
         return svgPath;
     }
-    private void drawxyz() {
-        final double WIDTH   = CONTROL.getPrefWidth();
-        final double HEIGHT  = CONTROL.getPrefHeight();
-        final double SCALE_X = WIDTH / PREFERRED_WIDTH;
-        final double SCALE_Y = HEIGHT / PREFERRED_HEIGHT;
-        Scale scale = new Scale();
-        scale.setX(SCALE_X);
-        scale.setY(SCALE_Y);
-        scale.setPivotX(0);
-        scale.setPivotY(0);
 
+    public static String colorToCssColor(final Color COLOR) {
+        final StringBuilder CSS_COLOR = new StringBuilder(19);
+        CSS_COLOR.append("rgba(");
+        CSS_COLOR.append((int) (COLOR.getRed() * 255)).append(", ");
+        CSS_COLOR.append((int) (COLOR.getGreen() * 255)).append(", ");
+        CSS_COLOR.append((int) (COLOR.getBlue() * 255)).append(", ");
+        CSS_COLOR.append(COLOR.getOpacity()).append(");");
+        return CSS_COLOR.toString();
     }
 }
