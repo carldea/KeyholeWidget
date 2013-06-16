@@ -32,6 +32,7 @@ public class KeyholeDemo extends Application {
     public void start(Stage primaryStage) {
         primaryStage.initStyle(StageStyle.TRANSPARENT);
         Keyhole keyhole1 = new KeyholeStage(primaryStage);
+        keyhole1.setWidgetMetalRimColor(Color.STEELBLUE);
 
         Group root = new Group();
         VBox vBox = new VBox();
@@ -43,10 +44,6 @@ public class KeyholeDemo extends Application {
         primaryStage.setTitle("Keyhole widget control");
         primaryStage.setScene(scene);
         primaryStage.show();
-
-        // change listeners work after control is realized (shown).
-        keyhole1.widgetMetalRimColorProperty().setValue(Color.STEELBLUE);
-        System.out.println("setcolor property");
     }
 
     public static void main(String[] args) {

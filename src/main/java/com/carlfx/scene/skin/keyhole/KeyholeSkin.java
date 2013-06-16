@@ -45,8 +45,6 @@ public class KeyholeSkin extends com.sun.javafx.scene.control.skin.BehaviorSkinB
         isDirty = false;
 
         init();
-
-        //startAnimations();
     }
     private void init() {
         System.out.println("skin:init()");
@@ -100,11 +98,6 @@ public class KeyholeSkin extends com.sun.javafx.scene.control.skin.BehaviorSkinB
         }
     }
 
-    private void updateKeyhole() {
-        System.out.println("skin:updateKeyhole()");
-
-    }
-
     public final void repaint() {
         System.out.println("skin:repaint()");
         isDirty = true;
@@ -132,6 +125,7 @@ public class KeyholeSkin extends com.sun.javafx.scene.control.skin.BehaviorSkinB
     }
 
     private void addHandlers() {
+        System.out.println("skin:addHandlers()");
 //        // MouseEvents
 //        setOnMousePressed(mouseHandler);
 //        setOnMouseDragged(mouseHandler);
@@ -198,7 +192,7 @@ public class KeyholeSkin extends com.sun.javafx.scene.control.skin.BehaviorSkinB
         svgPath.getTransforms().add(scale);
         svgPath.setContent("m 65.545965,0.350505 c -36.130555,0 -65.420156,28.815813 -65.420156,64.350793 0,35.534982 29.289601,64.335072 65.420156,64.335072 22.49148,0 42.323155,-11.1652 54.097435,-28.1653 l 146.15745,0 c 6.37235,0 11.51142,-5.123262 11.51142,-11.495662 l 0,-47.44535 c 0,-6.37234 -5.13907,-11.51144 -11.51142,-11.51144 l -144.88364,0 C 109.21711,12.151138 88.561815,0.350505 65.545965,0.350505 z");
         svgPath.setId("keyhole-widget-background");
-
+        svgPath.setStyle("-fx-fill: " + colorToCssColor(getSkinnable().getWidgetMetalRimColor()));
         return svgPath;
     }
     private Node drawOuterMetalRim(Scale scale) {

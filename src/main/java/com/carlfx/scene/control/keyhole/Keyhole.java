@@ -35,10 +35,12 @@ public class Keyhole extends Control {
     private ObjectProperty<Color> widgetMetalRimColor;
 
     public Keyhole () {
+        System.out.println("control:Keyhole()");
         init();
     }
 
     protected void init() {
+        System.out.println("control:init()");
         widgetMetalRimColor = new SimpleObjectProperty<Color>(Color.web("#75bac6"));
         getStyleClass().setAll(DEFAULT_STYLE_CLASS);
 
