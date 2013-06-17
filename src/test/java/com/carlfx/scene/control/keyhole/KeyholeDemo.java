@@ -41,11 +41,18 @@ import javafx.util.Duration;
  * Date: 6/8/13
  */
 public class KeyholeDemo extends Application {
+
     @Override
     public void start(Stage primaryStage) {
         primaryStage.initStyle(StageStyle.TRANSPARENT);
         Keyhole keyhole1 = new KeyholeStage(primaryStage);
-        keyhole1.setWidgetMetalRimColor(Color.STEELBLUE);
+        int speed = 250;
+//        keyhole1.setWidgetMetalRimColor(Color.rgb(233, 20, 20, .7));
+//        keyhole1.setWidgetMetalRimColor(Color.rgb(20, 233, 20, .7));
+//        keyhole1.setWidgetMetalRimColor(Color.rgb(20, 20, 233, .7));
+//        keyhole1.setWidgetMetalRimColor(Color.rgb(200, 200, 200, .7));
+//        keyhole1.setWidgetMetalRimColor(Color.STEELBLUE);
+        keyhole1.setWidgetMetalRimColor(Color.OLIVE);
 
         Image image = new Image("sunny.png");
         final ImageView imageView = new ImageView(image);
@@ -65,7 +72,7 @@ public class KeyholeDemo extends Application {
                 tt.setNode(imageView);
                 tt.setFromX(0);
                 tt.setToX(-image.getWidth());
-                tt.setDelay(Duration.millis(200));
+                tt.setDuration(Duration.millis(speed));
                 tt.setInterpolator(Interpolator.EASE_OUT);
                 tt.setOnFinished( e -> {
                     exitFlag.setValue(true);
@@ -85,7 +92,7 @@ public class KeyholeDemo extends Application {
                 tt.setNode(imageView);
                 tt.setFromY(0);
                 tt.setToY(-image.getHeight());
-                tt.setDelay(Duration.millis(200));
+                tt.setDuration(Duration.millis(speed));
                 tt.setInterpolator(Interpolator.EASE_OUT);
                 tt.setOnFinished( e -> {
                     exitFlag.setValue(true);
@@ -105,7 +112,7 @@ public class KeyholeDemo extends Application {
                 tt.setNode(imageView);
                 tt.setFromY(0);
                 tt.setToY(image.getHeight() * 2);
-                tt.setDelay(Duration.millis(250));
+                tt.setDuration(Duration.millis(speed));
                 tt.setInterpolator(Interpolator.EASE_OUT);
                 tt.setOnFinished( e -> {
                     exitFlag.setValue(true);
@@ -126,7 +133,7 @@ public class KeyholeDemo extends Application {
                 tt.setNode(imageView);
                 tt.setFromValue(1);
                 tt.setToValue(0);
-                tt.setDelay(Duration.millis(200));
+                tt.setDuration(Duration.millis(speed));
 
                 tt.setOnFinished( e -> {
                     exitFlag.setValue(true);
@@ -152,7 +159,7 @@ public class KeyholeDemo extends Application {
                 tt.setNode(imageView);
                 tt.setFromX(-image.getWidth());
                 tt.setToX(0);
-                tt.setDelay(Duration.millis(200));
+                tt.setDuration(Duration.millis(speed));
                 tt.setInterpolator(Interpolator.EASE_IN);
                 tt.setOnFinished( e -> {
                     exitFlag.setValue(false);
@@ -172,7 +179,7 @@ public class KeyholeDemo extends Application {
                 tt.setNode(imageView);
                 tt.setFromY(-image.getHeight());
                 tt.setToY(0);
-                tt.setDelay(Duration.millis(200));
+                tt.setDuration(Duration.millis(speed));
                 tt.setInterpolator(Interpolator.EASE_IN);
                 tt.setOnFinished( e -> {
                     exitFlag.setValue(false);
@@ -193,7 +200,7 @@ public class KeyholeDemo extends Application {
                 tt.setNode(imageView);
                 tt.setFromY(image.getHeight() * 2);
                 tt.setToY(0);
-                tt.setDelay(Duration.millis(250));
+                tt.setDuration(Duration.millis(speed));
                 tt.setInterpolator(Interpolator.EASE_IN);
                 tt.setOnFinished( e -> {
                     exitFlag.setValue(false);
@@ -215,7 +222,7 @@ public class KeyholeDemo extends Application {
                 tt.setNode(imageView);
                 tt.setFromValue(0);
                 tt.setToValue(1);
-                tt.setDelay(Duration.millis(200));
+                tt.setDuration(Duration.millis(speed));
 
                 tt.setOnFinished( e -> {
                     exitFlag.setValue(false);
