@@ -105,7 +105,7 @@ public class KeyholeDemo extends Application {
                 tt.setNode(imageView);
                 tt.setFromY(0);
                 tt.setToY(image.getHeight() * 2);
-                tt.setDelay(Duration.millis(200));
+                tt.setDelay(Duration.millis(250));
                 tt.setInterpolator(Interpolator.EASE_OUT);
                 tt.setOnFinished( e -> {
                     exitFlag.setValue(true);
@@ -116,7 +116,7 @@ public class KeyholeDemo extends Application {
 
         MenuItem exitFade = new MenuItem("Fade out");
         exitFade.setOnAction( ae -> {
-            System.out.println("Fade out" + exitFlag.get());
+            System.out.println("Fade out " + exitFlag.get());
             if (! exitFlag.get()) {
                 // fade out
                 imageView.setTranslateX(0);
@@ -139,6 +139,7 @@ public class KeyholeDemo extends Application {
         exitMenu.getItems().addAll(exitLeft, exitUp, exitDown, exitFade);
 
         Menu enterMenu = new Menu("Enter");
+        enterMenu.setDisable(true);
         MenuItem enterRight = new MenuItem("> Right");
         enterRight.setOnAction( ae -> {
             System.out.println("enter right " + exitFlag.get());
@@ -187,12 +188,12 @@ public class KeyholeDemo extends Application {
                 // move down
                 imageView.setOpacity(1);
                 imageView.setTranslateX(0);
-                imageView.setTranslateY(imageView.getBoundsInLocal().getHeight() * 2);
+                imageView.setTranslateY(image.getHeight() * 2);
                 TranslateTransition tt = new TranslateTransition();
                 tt.setNode(imageView);
-                tt.setFromY(imageView.getBoundsInLocal().getHeight() * 2);
+                tt.setFromY(image.getHeight() * 2);
                 tt.setToY(0);
-                tt.setDelay(Duration.millis(200));
+                tt.setDelay(Duration.millis(250));
                 tt.setInterpolator(Interpolator.EASE_IN);
                 tt.setOnFinished( e -> {
                     exitFlag.setValue(false);
@@ -231,6 +232,11 @@ public class KeyholeDemo extends Application {
 
         move.getItems().addAll(exitMenu, enterMenu, quit);
         keyhole1.setContextMenu(move);
+        exitFlag.addListener( cl -> {
+            boolean exit = exitFlag.get();
+            enterMenu.setDisable(!exit);
+            exitMenu.setDisable(exit);
+        });
         keyhole1.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
             @Override
             public void handle(ContextMenuEvent contextMenuEvent) {
