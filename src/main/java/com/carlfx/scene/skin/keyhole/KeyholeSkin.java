@@ -18,6 +18,8 @@ package com.carlfx.scene.skin.keyhole;
 
 import com.carlfx.scene.behavior.KeyholeBehavior;
 import com.carlfx.scene.control.keyhole.Keyhole;
+import javafx.collections.ListChangeListener;
+import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
@@ -37,6 +39,7 @@ public class KeyholeSkin extends com.sun.javafx.scene.control.skin.BehaviorSkinB
     private boolean     isDirty;
     private boolean     initialized;
     private Node        widgetBackground;
+    private Group       contentRegion;
 
     public KeyholeSkin(final Keyhole keyhole) {
         super(keyhole, new KeyholeBehavior(keyhole));
@@ -56,6 +59,16 @@ public class KeyholeSkin extends com.sun.javafx.scene.control.skin.BehaviorSkinB
         } else if (control.getPrefHeight() <= 0) {
             control.setPrefSize(control.getPrefWidth(), PREFERRED_HEIGHT);
         }
+        // add node list listener as content is added and removed.
+        getSkinnable().getContent().addListener( (ListChangeListener) change -> {
+                System.out.println("change " + change);
+                if (change.wasAdded()) {
+                    contentRegion.getChildren().removeAll(change.getAddedSubList());
+                    contentRegion.getChildren().addAll(change.getAddedSubList());
+                } else if (change.wasRemoved()) {
+                    contentRegion.getChildren().removeAll(change.getRemoved());
+                }
+        });
 
         // Register listeners
         registerChangeListener(control.widgetMetalRimColorProperty(), "OUTER_RIM_COLOR");
@@ -158,8 +171,12 @@ public class KeyholeSkin extends com.sun.javafx.scene.control.skin.BehaviorSkinB
 
         // draw #keyhole-outer-metal-rim
         Node outerMetalRim = drawOuterMetalRim(SCALE);
+
+        if (contentRegion != null) {
+            contentRegion.getChildren().clear();
+        }
         // draw #keyhole-content-background
-        Node contentBackground = drawContentBackground(SCALE);
+        contentRegion = drawContentBackground(SCALE);
         // draw #keyhole-top-glare-group
         // draw #keyhole-circle-glare-group
         // draw #keyhole-lower-right-circle
@@ -175,8 +192,7 @@ public class KeyholeSkin extends com.sun.javafx.scene.control.skin.BehaviorSkinB
 
         getChildren().addAll(widgetBackground,
                 outerMetalRim,
-                contentBackground,
-                // content goes here
+                contentRegion,
                 rightTopGlare,
                 rightBottomGlare,
                 upperLeftCircleGlare,
@@ -204,13 +220,22 @@ public class KeyholeSkin extends com.sun.javafx.scene.control.skin.BehaviorSkinB
         return svgPath;
     }
 
-    private Node drawContentBackground(Scale scale) {
+    private Group drawContentBackground(Scale scale) {
         SVGPath svgPath = new SVGPath();
         svgPath.getTransforms().add(scale);
         svgPath.setContent("m 65.608875,7.1834649 c -32.295481,0 -58.469271,25.7468531 -58.469271,57.5099531 0,31.76319 26.17379,57.509952 58.469271,57.509952 21.23968,0 39.829435,-11.143 50.071575,-27.803462 l 149.41272,0 c 2.87731,0 5.20531,-2.3123 5.20531,-5.1896 l 0,-47.85427 c 0,-2.87728 -2.328,-5.18953 -5.20531,-5.18953 l -148.70505,0 C 106.20743,18.633498 87.060795,7.1834649 65.608875,7.1834649 z");
         svgPath.setId("keyhole-content-background");
 
-        return svgPath;
+        SVGPath svgClipPath = new SVGPath();
+        svgClipPath.getTransforms().add(scale);
+        svgClipPath.setContent("m 65.608875,7.1834649 c -32.295481,0 -58.469271,25.7468531 -58.469271,57.5099531 0,31.76319 26.17379,57.509952 58.469271,57.509952 21.23968,0 39.829435,-11.143 50.071575,-27.803462 l 149.41272,0 c 2.87731,0 5.20531,-2.3123 5.20531,-5.1896 l 0,-47.85427 c 0,-2.87728 -2.328,-5.18953 -5.20531,-5.18953 l -148.70505,0 C 106.20743,18.633498 87.060795,7.1834649 65.608875,7.1834649 z");
+
+
+        Group parent = new Group();
+        parent.setClip(svgClipPath);
+        parent.getChildren().add(svgPath);
+        parent.getChildren().addAll(getSkinnable().getContent());
+        return parent;
     }
 
     private Node drawRightBottomGlare(Scale scale) {

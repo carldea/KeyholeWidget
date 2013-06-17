@@ -17,8 +17,18 @@ package com.carlfx.scene.control.keyhole;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.MapChangeListener;
+import javafx.collections.ObservableList;
+import javafx.collections.ObservableMap;
+import javafx.scene.Node;
 import javafx.scene.control.Control;
 import javafx.scene.paint.Color;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -33,6 +43,8 @@ public class Keyhole extends Control {
      * main widget background.
      */
     private ObjectProperty<Color> widgetMetalRimColor;
+    private List<Node> nodeList = new ArrayList<>();
+    private ObservableList<Node> content = FXCollections.observableArrayList(nodeList);
 
     public Keyhole () {
         System.out.println("control:Keyhole()");
@@ -43,7 +55,6 @@ public class Keyhole extends Control {
         System.out.println("control:init()");
         widgetMetalRimColor = new SimpleObjectProperty<Color>(Color.web("#75bac6"));
         getStyleClass().setAll(DEFAULT_STYLE_CLASS);
-
     }
 
     @Override
@@ -61,5 +72,9 @@ public class Keyhole extends Control {
 
     public void setWidgetMetalRimColor(Color widgetMetalRimColor) {
         this.widgetMetalRimColor.set(widgetMetalRimColor);
+    }
+
+    public ObservableList<Node> getContent() {
+        return content;
     }
 }
