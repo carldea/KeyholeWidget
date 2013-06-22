@@ -18,6 +18,7 @@ package com.carlfx.scene.control.keyhole;
 import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.TouchEvent;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
@@ -39,7 +40,10 @@ public class KeyholeStage extends Keyhole {
     protected EventHandler<MouseEvent> mouseDragged;
     protected EventHandler<MouseEvent> mouseReleased;
 
-    // TODO Touch based events
+    // touch based events.
+    protected EventHandler<TouchEvent> touchPressed;
+    protected EventHandler<TouchEvent> touchMoved;
+    protected EventHandler<TouchEvent> touchReleased;
 
     public KeyholeStage(Stage stage) {
         draggableStage = stage;
@@ -60,8 +64,9 @@ public class KeyholeStage extends Keyhole {
         };
         mousePressed = e -> {
             //e.consume();
-            anchorPt = new Point2D(e.getScreenX(), e.getScreenY());
+            beginDrag(e.getScreenX(), e.getScreenY());
         };
+
         mouseClicked = e -> {
             //e.consume();
             //System.out.println(e);
@@ -69,16 +74,30 @@ public class KeyholeStage extends Keyhole {
 
         mouseDragged = e -> {
             //e.consume();
-            if (anchorPt != null && previousLocation != null) {
-                draggableStage.setX(previousLocation.getX() + e.getScreenX() - anchorPt.getX());
-                draggableStage.setY(previousLocation.getY() + e.getScreenY() - anchorPt.getY());
-            }
+            dragMove(e.getScreenX(), e.getScreenY());
         };
 
         mouseReleased = e -> {
             //e.consume();
-            previousLocation = new Point2D(draggableStage.getX(), draggableStage.getY());
+            endDrag();
         };
+
+        touchPressed = e -> {
+            //e.consume();
+            System.out.println(e);
+            beginDrag(e.getTouchPoint().getScreenX(), e.getTouchPoint().getScreenY());
+        };
+
+        touchMoved = e -> {
+            System.out.println(e);
+            dragMove(e.getTouchPoint().getScreenX(), e.getTouchPoint().getScreenY());
+        };
+
+        touchReleased = e -> {
+            endDrag();
+        };
+
+
         // build filters to intercept mouse events.
         removeAllEvents();
         addAllDefaultEvents();
@@ -92,6 +111,21 @@ public class KeyholeStage extends Keyhole {
         }
     }
 
+    protected void beginDrag(double x, double y) {
+        anchorPt = new Point2D(x, y);
+    }
+
+    protected void dragMove(double x, double y) {
+        if (anchorPt != null && previousLocation != null) {
+            draggableStage.setX(previousLocation.getX() + x - anchorPt.getX());
+            draggableStage.setY(previousLocation.getY() + y - anchorPt.getY());
+        }
+    }
+
+    protected void endDrag() {
+        previousLocation = new Point2D(draggableStage.getX(), draggableStage.getY());
+    }
+
     public void removeAllEvents() {
         removeEventFilter(MouseEvent.MOUSE_ENTERED, mouseEntered);
         removeEventFilter(MouseEvent.MOUSE_PRESSED, mousePressed);
@@ -99,6 +133,11 @@ public class KeyholeStage extends Keyhole {
         removeEventFilter(MouseEvent.MOUSE_DRAGGED, mouseDragged);
         removeEventFilter(MouseEvent.MOUSE_EXITED, mouseExit);
         removeEventFilter(MouseEvent.MOUSE_RELEASED, mouseReleased);
+
+        removeEventFilter(TouchEvent.TOUCH_PRESSED, touchPressed);
+        removeEventFilter(TouchEvent.TOUCH_MOVED, touchMoved);
+        removeEventFilter(TouchEvent.TOUCH_RELEASED, touchReleased);
+
 
     }
     public void addAllDefaultEvents() {
@@ -109,5 +148,9 @@ public class KeyholeStage extends Keyhole {
         addEventFilter(MouseEvent.MOUSE_DRAGGED, mouseDragged);
         addEventFilter(MouseEvent.MOUSE_EXITED, mouseExit);
         addEventFilter(MouseEvent.MOUSE_RELEASED, mouseReleased);
+
+        addEventFilter(TouchEvent.TOUCH_PRESSED, touchPressed);
+        addEventHandler(TouchEvent.TOUCH_MOVED, touchMoved);
+        addEventHandler(TouchEvent.TOUCH_RELEASED, touchReleased);
     }
 }
