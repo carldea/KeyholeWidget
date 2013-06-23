@@ -21,7 +21,6 @@ import javafx.animation.TranslateTransition;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.ContextMenu;
@@ -29,7 +28,6 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -58,6 +56,7 @@ public class KeyholeDemo extends Application {
         final ImageView imageView = new ImageView(image);
         keyhole1.getContent().add(imageView);
         ContextMenu move = new ContextMenu();
+
         SimpleBooleanProperty exitFlag = new SimpleBooleanProperty(false);
         Menu exitMenu = new Menu("Exit");
         MenuItem exitLeft = new MenuItem("< Left");
@@ -231,12 +230,19 @@ public class KeyholeDemo extends Application {
             }
         });
         enterMenu.getItems().addAll(enterRight, enterDown, enterUp, enterFade);
-
+//        MenuItem print = new MenuItem("Print...");
+//        print.setOnAction( ae -> {
+//            PrinterJob printerJob = PrinterJob.createPrinterJob();
+//            if(printerJob.showPrintDialog(primaryStage.getOwner()) && printerJob.printPage(keyhole1)) {
+//                printerJob.endJob();
+//            }
+//        });
         MenuItem quit = new MenuItem(":! Quit");
         quit.setOnAction( ae -> {
             Platform.exit();
         });
 
+        //move.getItems().addAll(exitMenu, enterMenu, print, quit);
         move.getItems().addAll(exitMenu, enterMenu, quit);
         keyhole1.setContextMenu(move);
         exitFlag.addListener( cl -> {
@@ -244,11 +250,8 @@ public class KeyholeDemo extends Application {
             enterMenu.setDisable(!exit);
             exitMenu.setDisable(exit);
         });
-        keyhole1.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
-            @Override
-            public void handle(ContextMenuEvent contextMenuEvent) {
-                System.out.println(contextMenuEvent);
-            }
+        keyhole1.setOnContextMenuRequested( cme -> {
+                System.out.println(cme);
         });
 
 

@@ -18,6 +18,7 @@ package com.carlfx.scene.control.keyhole;
 import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.SwipeEvent;
 import javafx.scene.input.TouchEvent;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
@@ -44,6 +45,8 @@ public class KeyholeStage extends Keyhole {
     protected EventHandler<TouchEvent> touchPressed;
     protected EventHandler<TouchEvent> touchMoved;
     protected EventHandler<TouchEvent> touchReleased;
+
+    protected EventHandler<SwipeEvent> swipeDirection;
 
     public KeyholeStage(Stage stage) {
         draggableStage = stage;
@@ -96,7 +99,13 @@ public class KeyholeStage extends Keyhole {
         touchReleased = e -> {
             endDrag();
         };
-
+        swipeDirection = e -> {
+          if (e.getEventType() == SwipeEvent.ANY) {
+            if (getContextMenu() != null) {
+                getContextMenu().show(this, e.getScreenX(), e.getScreenY());
+            }
+          }
+        };
 
         // build filters to intercept mouse events.
         removeAllEvents();
@@ -138,6 +147,7 @@ public class KeyholeStage extends Keyhole {
         removeEventFilter(TouchEvent.TOUCH_MOVED, touchMoved);
         removeEventFilter(TouchEvent.TOUCH_RELEASED, touchReleased);
 
+        removeEventFilter(SwipeEvent.ANY, swipeDirection);
 
     }
     public void addAllDefaultEvents() {
@@ -150,7 +160,9 @@ public class KeyholeStage extends Keyhole {
         addEventFilter(MouseEvent.MOUSE_RELEASED, mouseReleased);
 
         addEventFilter(TouchEvent.TOUCH_PRESSED, touchPressed);
-        addEventHandler(TouchEvent.TOUCH_MOVED, touchMoved);
-        addEventHandler(TouchEvent.TOUCH_RELEASED, touchReleased);
+        addEventFilter(TouchEvent.TOUCH_MOVED, touchMoved);
+        addEventFilter(TouchEvent.TOUCH_RELEASED, touchReleased);
+
+        addEventFilter(SwipeEvent.ANY, swipeDirection);
     }
 }
