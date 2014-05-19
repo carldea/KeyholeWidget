@@ -15,20 +15,13 @@
  */
 package com.carlfx.scene.control.keyhole;
 
+import com.carlfx.scene.skin.keyhole.KeyholeSkin;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.MapChangeListener;
-import javafx.collections.ObservableList;
-import javafx.collections.ObservableMap;
 import javafx.scene.Node;
 import javafx.scene.control.Control;
+import javafx.scene.control.Skin;
 import javafx.scene.paint.Color;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  *
@@ -36,15 +29,12 @@ import java.util.Map;
  */
 public class Keyhole extends Control {
     protected static final String DEFAULT_STYLE_CLASS = "keyhole-widget";
-    public static final double  PREFERRED_WIDTH = 277.438;
-    public static final double  PREFERRED_HEIGHT = 128.938;
 
     /** #keyhole-widget-background
      * main widget background.
      */
     private ObjectProperty<Color> widgetMetalRimColor;
-    private List<Node> nodeList = new ArrayList<>();
-    private ObservableList<Node> content = FXCollections.observableArrayList(nodeList);
+    private Node content;
 
     public Keyhole () {
         System.out.println("control:Keyhole()");
@@ -56,9 +46,13 @@ public class Keyhole extends Control {
         widgetMetalRimColor = new SimpleObjectProperty<Color>(Color.web("#75bac6"));
         getStyleClass().setAll(DEFAULT_STYLE_CLASS);
     }
+    @Override protected Skin createDefaultSkin() {
+        System.out.println("control:createDefaultSkin()");
+        return new KeyholeSkin(this);
+    }
 
-    @Override
-    protected String getUserAgentStylesheet() {
+    @Override protected String getUserAgentStylesheet() {
+        System.out.println("control:getUserAgentStylesheet()");
         return getClass().getResource("/scene/control/keyhole_widget.css").toExternalForm();
     }
 
@@ -74,7 +68,10 @@ public class Keyhole extends Control {
         this.widgetMetalRimColor.set(widgetMetalRimColor);
     }
 
-    public ObservableList<Node> getContent() {
+    public Node getContent() {
         return content;
+    }
+    public void setContent(Node content) {
+        this.content = content;
     }
 }

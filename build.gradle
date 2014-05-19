@@ -3,6 +3,8 @@ apply plugin: 'maven'
 apply plugin: 'signing'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
+apply plugin:'application'
+mainClassName = "test.com.carlfx.scene.control.keyhole.KeyholeDemo"
 
 repositories {
     url = "https://oss.sonatype.org/content/repositories/snapshots/"
@@ -47,4 +49,13 @@ uploadArchives.onlyIf {
 task copyToLib(type: Copy) {
     into "_lib"
     from configurations.testCompile
+}
+
+task uberjar(type: Jar) {
+    from files(sourceSets.main.output.classesDir)
+    from configurations.runtime.asFileTree.files.collect { zipTree(it) }
+
+    manifest {
+        attributes 'Main-Class': 'com.carlfx.scene.control.keyhole.KeyholeDemo'
+    }
 }

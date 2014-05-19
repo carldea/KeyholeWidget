@@ -16,18 +16,15 @@
 package com.carlfx.scene.skin.keyhole;
 
 
-import com.carlfx.scene.behavior.KeyholeBehavior;
 import com.carlfx.scene.control.keyhole.Keyhole;
-import javafx.collections.ListChangeListener;
 import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.control.Skin;
+import javafx.scene.control.SkinBase;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.transform.Scale;
 import javafx.scene.transform.Transform;
-
-import static com.carlfx.scene.control.keyhole.Keyhole.PREFERRED_HEIGHT;
-import static com.carlfx.scene.control.keyhole.Keyhole.PREFERRED_WIDTH;
 
 /**
  * This represents the JavaFX Skin class mainly comprised of the drawings of
@@ -35,22 +32,23 @@ import static com.carlfx.scene.control.keyhole.Keyhole.PREFERRED_WIDTH;
  *
  * @author cdea
  */
-public class KeyholeSkin extends com.sun.javafx.scene.control.skin.BehaviorSkinBase<Keyhole, KeyholeBehavior>{
-    private boolean     isDirty;
+public class KeyholeSkin extends SkinBase<Keyhole> implements Skin<Keyhole> {
+    public static final double  PREFERRED_WIDTH = 277.438;
+    public static final double  PREFERRED_HEIGHT = 128.938;
+//    private boolean     isDirty;
     private boolean     initialized;
     private Node        widgetBackground;
-    private Group       contentRegion;
 
     public KeyholeSkin(final Keyhole keyhole) {
-        super(keyhole, new KeyholeBehavior(keyhole));
+        super(keyhole);
         System.out.println("skin:KeyholeSkin()");
-        initialized  = false;
-        isDirty = false;
-
         init();
+        initGraphics();
+        registerListeners();
     }
     private void init() {
         System.out.println("skin:init()");
+
         Keyhole control = getSkinnable();
         if (control.getPrefWidth() <= 0 && control.getPrefHeight() <= 0) {
             control.setPrefSize(PREFERRED_WIDTH, PREFERRED_HEIGHT);
@@ -59,19 +57,19 @@ public class KeyholeSkin extends com.sun.javafx.scene.control.skin.BehaviorSkinB
         } else if (control.getPrefHeight() <= 0) {
             control.setPrefSize(control.getPrefWidth(), PREFERRED_HEIGHT);
         }
-        // add node list listener as content is added and removed.
-        getSkinnable().getContent().addListener( (ListChangeListener) change -> {
-                System.out.println("change " + change);
-                if (change.wasAdded()) {
-                    contentRegion.getChildren().removeAll(change.getAddedSubList());
-                    contentRegion.getChildren().addAll(change.getAddedSubList());
-                } else if (change.wasRemoved()) {
-                    contentRegion.getChildren().removeAll(change.getRemoved());
-                }
-        });
+//        // add node list listener as content is added and removed.
+//        getSkinnable().getContent().addListener( (ListChangeListener) change -> {
+//                System.out.println("change " + change);
+//                if (change.wasAdded()) {
+//                    contentRegion.getChildren().removeAll(change.getAddedSubList());
+//                    contentRegion.getChildren().addAll(change.getAddedSubList());
+//                } else if (change.wasRemoved()) {
+//                    contentRegion.getChildren().removeAll(change.getRemoved());
+//                }
+//        });
 
         // Register listeners
-        registerChangeListener(control.widgetMetalRimColorProperty(), "OUTER_RIM_COLOR");
+        registerListeners();
 //        mouseHandler = new EventHandler<MouseEvent>() {
 //            @Override public void handle(final MouseEvent event) {
 //                if (MouseEvent.MOUSE_PRESSED == event.getEventType()) {
@@ -99,9 +97,58 @@ public class KeyholeSkin extends com.sun.javafx.scene.control.skin.BehaviorSkinB
         initialized = true;
         repaint();
     }
-    @Override protected void handleControlPropertyChanged(final String PROPERTY) {
-        System.out.println("skin:handleControlPropertyChanged()");
-        super.handleControlPropertyChanged(PROPERTY);
+    private void initGraphics() {
+        System.out.println("skin:initGraphics()");
+        getChildren().clear();
+        Keyhole control = getSkinnable();
+        final double WIDTH          = control.getPrefWidth();
+        final double HEIGHT         = control.getPrefHeight();
+        final double SCALE_FACTOR_X = WIDTH / PREFERRED_WIDTH;
+        final double SCALE_FACTOR_Y = HEIGHT / PREFERRED_HEIGHT;
+        final Scale SCALE           = new Scale();
+        SCALE.setX(SCALE_FACTOR_X);
+        SCALE.setY(SCALE_FACTOR_Y);
+        SCALE.setPivotX(0);
+        SCALE.setPivotY(0);
+
+        // draw #keyhole-widget-background
+        widgetBackground = drawWidgetBackground(SCALE);
+
+        // draw #keyhole-outer-metal-rim
+        Node outerMetalRim = drawOuterMetalRim(SCALE);
+
+//        if (control.getContent() != null) {
+//            contentRegion.getChildren().clear();
+//        }  else {
+//            // draw #keyhole-content-background
+//            contentRegion = drawContentBackground(SCALE);
+//        }
+        Node contentAndBkground = drawContentBackground(SCALE);
+        // draw #keyhole-top-glare-group
+        // draw #keyhole-circle-glare-group
+        // draw #keyhole-lower-right-circle
+        Node  lowerRightCircleGlare = drawLowerCircleGlare(SCALE);
+        // draw #keyhole-upper-left-circle-glare
+        Node upperLeftCircleGlare = drawUpperCircleGlare(SCALE);
+
+        // draw #keyhole-right-glare-group
+        // draw #keyhole-right-bottom-glare
+        Node rightBottomGlare = drawRightBottomGlare(SCALE);
+        // draw #keyhole-right-top-glare
+        Node rightTopGlare = drawRightTopGlare(SCALE);
+
+        getChildren().addAll(widgetBackground,
+                outerMetalRim,
+                contentAndBkground,
+                rightTopGlare,
+                rightBottomGlare,
+                upperLeftCircleGlare,
+                lowerRightCircleGlare
+        );
+    }
+
+    protected void handleControlPropertyChanged(final String PROPERTY) {
+        System.out.println("skin:handleControlPropertyChanged() : " + PROPERTY);
         if ("OUTER_RIM_COLOR".equals(PROPERTY)) {
             widgetBackground.setStyle("-fx-fill: " + colorToCssColor(getSkinnable().getWidgetMetalRimColor()));
         } else if ("PREF_WIDTH".equals(PROPERTY)) {
@@ -111,25 +158,30 @@ public class KeyholeSkin extends com.sun.javafx.scene.control.skin.BehaviorSkinB
         }
     }
 
+    private void registerListeners() {
+        getSkinnable().widthProperty().addListener(observable -> handleControlPropertyChanged("PREF_WIDTH") );
+        getSkinnable().heightProperty().addListener(observable -> handleControlPropertyChanged("PREF_HEIGHT"));
+        getSkinnable().widgetMetalRimColorProperty().addListener(observable -> handleControlPropertyChanged("OUTER_RIM_COLOR"));
+    }
     public final void repaint() {
         System.out.println("skin:repaint()");
-        isDirty = true;
+//        isDirty = true;
         getSkinnable().requestLayout();
     }
 
     @Override public void layoutChildren(double x, double y, double w, double h) {
         super.layoutChildren(x, y, w, h);
         System.out.println("skin:layoutChildren()");
-        if (!isDirty) {
-            return;
-        }
+//        if (!isDirty) {
+//            return;
+//        }
         if (!initialized) {
             init();
         }
         if (getSkinnable().getScene() != null) {
             drawControl();
         }
-        isDirty = false;
+//        isDirty = false;
     }
 
     @Override public void dispose() {
@@ -172,11 +224,13 @@ public class KeyholeSkin extends com.sun.javafx.scene.control.skin.BehaviorSkinB
         // draw #keyhole-outer-metal-rim
         Node outerMetalRim = drawOuterMetalRim(SCALE);
 
-        if (contentRegion != null) {
-            contentRegion.getChildren().clear();
-        }
-        // draw #keyhole-content-background
-        contentRegion = drawContentBackground(SCALE);
+//        if (control.getContent() != null) {
+//            contentRegion.getChildren().clear();
+//        }  else {
+//            // draw #keyhole-content-background
+//            contentRegion = drawContentBackground(SCALE);
+//        }
+        Node contentAndBkground = drawContentBackground(SCALE);
         // draw #keyhole-top-glare-group
         // draw #keyhole-circle-glare-group
         // draw #keyhole-lower-right-circle
@@ -192,7 +246,7 @@ public class KeyholeSkin extends com.sun.javafx.scene.control.skin.BehaviorSkinB
 
         getChildren().addAll(widgetBackground,
                 outerMetalRim,
-                contentRegion,
+                contentAndBkground,
                 rightTopGlare,
                 rightBottomGlare,
                 upperLeftCircleGlare,

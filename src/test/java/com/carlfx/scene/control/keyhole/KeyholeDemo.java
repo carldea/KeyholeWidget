@@ -32,6 +32,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.stage.Window;
 import javafx.util.Duration;
 
 /** This demonstrates the Keyhole widget control as an irregular shaped window on the desktop.
@@ -43,6 +44,7 @@ public class KeyholeDemo extends Application {
     @Override
     public void start(Stage primaryStage) {
         primaryStage.initStyle(StageStyle.TRANSPARENT);
+        primaryStage.setAlwaysOnTop(true);
         Keyhole keyhole1 = new KeyholeStage(primaryStage);
         int speed = 250;
 //        keyhole1.setWidgetMetalRimColor(Color.rgb(233, 20, 20, .7));
@@ -54,7 +56,7 @@ public class KeyholeDemo extends Application {
 
         Image image = new Image("sunny.png");
         final ImageView imageView = new ImageView(image);
-        keyhole1.getContent().add(imageView);
+        keyhole1.setContent(imageView);
         ContextMenu move = new ContextMenu();
 
         SimpleBooleanProperty exitFlag = new SimpleBooleanProperty(false);
@@ -73,9 +75,10 @@ public class KeyholeDemo extends Application {
                 tt.setToX(-image.getWidth());
                 tt.setDuration(Duration.millis(speed));
                 tt.setInterpolator(Interpolator.EASE_OUT);
-                tt.setOnFinished( e -> {
+                tt.setOnFinished(e -> {
                     exitFlag.setValue(true);
                 });
+
                 tt.playFromStart();
             }
         });
@@ -256,9 +259,10 @@ public class KeyholeDemo extends Application {
 
 
         Group root = new Group();
-        VBox vBox = new VBox();
-        vBox.getChildren().addAll(keyhole1);
-        root.getChildren().add(vBox);
+        root.getChildren().add(keyhole1);
+//        VBox vBox = new VBox();
+//        vBox.getChildren().addAll(keyhole1);
+//        root.getChildren().add(vBox);
 
         Scene scene = new Scene(root, keyhole1.getPrefWidth(), keyhole1.getPrefHeight(), null);
 
