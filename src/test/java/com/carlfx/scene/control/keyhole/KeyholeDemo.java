@@ -23,16 +23,12 @@ import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuItem;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import javafx.stage.Window;
 import javafx.util.Duration;
 
 /** This demonstrates the Keyhole widget control as an irregular shaped window on the desktop.
@@ -53,13 +49,23 @@ public class KeyholeDemo extends Application {
 //        keyhole1.setWidgetMetalRimColor(Color.rgb(200, 200, 200, .7));
 //        keyhole1.setWidgetMetalRimColor(Color.STEELBLUE);
         keyhole1.setWidgetMetalRimColor(Color.OLIVE);
-
+        ColorPicker colorPicker = new ColorPicker(Color.OLIVE);
+        colorPicker.setOnAction(ae -> {
+            keyhole1.setWidgetMetalRimColor(colorPicker.getValue());
+        });
         Image image = new Image("sunny.png");
         final ImageView imageView = new ImageView(image);
         keyhole1.setContent(imageView);
         ContextMenu move = new ContextMenu();
 
         SimpleBooleanProperty exitFlag = new SimpleBooleanProperty(false);
+        Menu colorMenu = new Menu("Rim Color");
+        MenuItem  colorWheel = new CustomMenuItem(colorPicker, false);
+        colorWheel.setOnAction( ae ->  {
+            colorPicker.show();
+        });
+        colorMenu.getItems().addAll(colorWheel);
+
         Menu exitMenu = new Menu("Exit");
         MenuItem exitLeft = new MenuItem("< Left");
         exitLeft.setOnAction( ae -> {
@@ -246,7 +252,7 @@ public class KeyholeDemo extends Application {
         });
 
         //move.getItems().addAll(exitMenu, enterMenu, print, quit);
-        move.getItems().addAll(exitMenu, enterMenu, quit);
+        move.getItems().addAll(colorMenu, exitMenu, enterMenu, quit);
         keyhole1.setContextMenu(move);
         exitFlag.addListener( cl -> {
             boolean exit = exitFlag.get();
